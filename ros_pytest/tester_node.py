@@ -25,9 +25,9 @@ class HelperTestNode(Node):
     def __init__(self, name='test_node'):
         super().__init__(name)
 
-    def start_node(self):
+    def start_node(self, node):
         executor = rclpy.executors.MultiThreadedExecutor()
-        executor.add_node(self)
+        executor.add_node(node)
         Thread(target=executor.spin).start()
 
     def change_lc_node_state(self, node_name, transition_id):

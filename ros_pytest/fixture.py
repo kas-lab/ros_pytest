@@ -1,4 +1,4 @@
-# Copyright 2015 Open Source Robotics Foundation, Inc.
+# Copyright 2023 Gustavo Rezende Silva
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ament_copyright.main import main
 import pytest
+import rclpy
+
+from ros_pytest.tester_node import HelperTestNode
 
 
-@pytest.mark.skip(reason='skip.')
-@pytest.mark.copyright
-@pytest.mark.linter
-def test_copyright():
-    rc = main(argv=['.', 'test'])
-    assert rc == 0, 'Found errors'
+@pytest.fixture(scope="module")
+def tester_node():
+    rclpy.init()
+    node = HelperTestNode('tester_node')
+    node.start_node(node)
+    yield node
+    rclpy.shutdown()

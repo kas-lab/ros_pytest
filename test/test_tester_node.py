@@ -18,11 +18,10 @@ import launch_ros
 from pathlib import Path
 
 import pytest
-import rclpy
 
 import sys
 
-from ros_pytest.tester_node import HelperTestNode
+from ros_pytest.fixture import tester_node
 
 test_node = 'test_helper_node'
 tested_node = 'mock_node'
@@ -44,20 +43,13 @@ def generate_test_description():
     ])
 
 
-@pytest.fixture(scope="module")
-def tester_node():
-    rclpy.init()
-    node = HelperTestNode(test_node)
-    node.start_node()
-    yield node
-    rclpy.shutdown()
-
-
 @pytest.mark.launch(fixture=generate_test_description)
+@pytest.mark.usefixtures(fixture=tester_node)
 def test_lc_configure(tester_node):
     assert tester_node.lc_configure(tested_node)
 
 
 @pytest.mark.launch(fixture=generate_test_description)
+@pytest.mark.usefixtures(fixture=tester_node)
 def test_lc_configure_activate(tester_node):
     assert tester_node.lc_configure_activate(tested_node)
