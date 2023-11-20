@@ -49,12 +49,11 @@ class HelperTestNode(Node):
                 'service not available {}'.format(cli.srv_name))
             return None
         future = cli.call_async(request)
-        if self.executor.spin_until_future_complete(
-                future, timeout_sec=5.0) is False:
+        self.executor.spin_until_future_complete(future, timeout_sec=5.0)
+        if future.done() is False:
             self.get_logger().error(
                 'Future not completed {}'.format(cli.srv_name))
             return None
-
         return future.result()
 
     def activate_lc_node(self, node_name):
