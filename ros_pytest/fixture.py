@@ -23,4 +23,5 @@ def tester_node():
     node = HelperTestNode('tester_node')
     node.start_node(node)
     yield node
+    node.destroy_node()
     rclpy.shutdown()
