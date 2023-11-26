@@ -17,7 +17,7 @@ import rclpy
 from ros_pytest.tester_node import HelperTestNode
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def tester_node():
     rclpy.init()
     node = HelperTestNode('tester_node')
