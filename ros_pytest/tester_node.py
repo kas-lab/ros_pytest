@@ -20,15 +20,33 @@ from lifecycle_msgs.srv import ChangeState
 from lifecycle_msgs.srv import GetState
 
 
+def spin_srv(executor):
+    try:
+        executor.spin()
+    except rclpy.executors.ExternalShutdownException:
+        pass
+
+
 class HelperTestNode(Node):
 
     def __init__(self, name='test_node'):
         super().__init__(name)
+        self.threads = []
+        self.helper_executors = []
 
     def start_node(self, node):
-        executor = rclpy.executors.MultiThreadedExecutor()
+        executor = rclpy.executors.SingleThreadedExecutor()
         executor.add_node(node)
-        Thread(target=executor.spin).start()
+        self.helper_executors.append(executor)
+        new_thread = Thread(target=spin_srv, args=(executor, ), daemon=True)
+        new_thread.start()
+        self.threads.append(new_thread)
+
+    def join_nodes(self):
+        for executor in self.helper_executors:
+            executor.shutdown()
+        for thread in self.threads:
+            thread.join()
 
     def change_lc_node_state(self, node_name, transition_id):
         srv = self.create_client(

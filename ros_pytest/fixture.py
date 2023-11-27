@@ -25,3 +25,4 @@ def tester_node():
     yield node
     node.destroy_node()
     rclpy.shutdown()
+    node.join_nodes()
